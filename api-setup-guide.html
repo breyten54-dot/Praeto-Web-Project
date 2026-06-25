@@ -1,0 +1,651 @@
+<title>API Setup Guide — Praeto Compliance Club</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:     #1F3864;
+    --navy-d:   #162952;
+    --gold:     #C9A84C;
+    --gold-l:   #E8C96A;
+    --gold-bg:  #F7EDD0;
+    --ink:      #1C2333;
+    --muted:    #5A6478;
+    --subtle:   #8A94A6;
+    --surface:  #F8F7F4;
+    --white:    #FFFFFF;
+    --border:   #DDD8CE;
+
+    --sendgrid: #1A82E2;
+    --anthropic:#B05A2F;
+    --payfast:  #16803C;
+
+    --step-bg:  #F2F0EC;
+  }
+
+  html { font-size: 16px; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--surface);
+    color: var(--ink);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── HEADER ── */
+  .doc-header {
+    background: var(--navy);
+    border-bottom: 3px solid var(--gold);
+    padding: 36px 0 32px;
+  }
+
+  .doc-header-inner {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+
+  .doc-eyebrow {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+
+  .doc-title {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.2;
+    text-wrap: balance;
+    margin-bottom: 10px;
+  }
+
+  .doc-sub {
+    font-size: 14px;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.6;
+  }
+
+  /* ── INTRO BANNER ── */
+  .intro {
+    background: var(--gold-bg);
+    border-bottom: 1px solid #DFD4B8;
+    padding: 20px 0;
+  }
+
+  .intro-inner {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 40px;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+
+  .intro-rail {
+    width: 3px;
+    background: var(--gold);
+    flex-shrink: 0;
+    border-radius: 2px;
+    align-self: stretch;
+  }
+
+  .intro p {
+    font-size: 13.5px;
+    color: #5C4A1E;
+    line-height: 1.7;
+  }
+
+  .intro strong { color: #3D2E0A; }
+
+  /* ── MAIN ── */
+  .main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 48px 40px 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  /* ── SERVICE CARD ── */
+  .service {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .service-header {
+    padding: 22px 28px 18px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .service-stripe {
+    width: 4px;
+    border-radius: 2px;
+    flex-shrink: 0;
+    align-self: stretch;
+    min-height: 48px;
+  }
+
+  .service-meta { flex: 1; }
+
+  .service-label {
+    font-family: 'Courier New', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--subtle);
+    margin-bottom: 5px;
+  }
+
+  .service-name {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+
+  .service-purpose {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .service-url-chip {
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    background: var(--step-bg);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 4px 10px;
+    color: var(--muted);
+    white-space: nowrap;
+    align-self: center;
+    flex-shrink: 0;
+    text-decoration: none;
+  }
+
+  .service-url-chip:hover { color: var(--navy); border-color: var(--navy); }
+
+  /* ── STEPS ── */
+  .steps {
+    padding: 24px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .step {
+    display: flex;
+    gap: 18px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .step:last-child { border-bottom: none; }
+
+  .step-num {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .step-body { flex: 1; }
+
+  .step-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 5px;
+    line-height: 1.3;
+  }
+
+  .step-detail {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  .step-detail a {
+    color: var(--navy);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .step-detail a:hover { text-decoration: underline; }
+
+  /* ── INLINE CODE / VALUES ── */
+  code {
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    background: var(--step-bg);
+    border: 1px solid var(--border);
+    padding: 2px 6px;
+    border-radius: 2px;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  /* ── CALLOUT ── */
+  .callout {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    background: var(--step-bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 12px 14px;
+    margin-top: 12px;
+  }
+
+  .callout-mark {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--white);
+    background: var(--navy);
+    padding: 2px 6px;
+    border-radius: 2px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .callout p {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .callout strong { color: var(--ink); }
+
+  /* ── ENV BLOCK ── */
+  .env-block {
+    background: #1C2333;
+    border-radius: 3px;
+    margin-top: 12px;
+    padding: 14px 16px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.9;
+    overflow-x: auto;
+  }
+
+  .env-comment { color: #5C6A7E; }
+  .env-key     { color: #81AADE; }
+  .env-eq      { color: #7A8899; }
+  .env-val     { color: #E8C96A; }
+
+  /* ── SUMMARY BOX ── */
+  .summary {
+    background: var(--navy);
+    border-radius: 3px;
+    padding: 24px 28px;
+    margin-top: 8px;
+  }
+
+  .summary-title {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 16px;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    gap: 12px;
+  }
+
+  .summary-row:last-child { border-bottom: none; }
+
+  .summary-service { font-size: 13px; color: rgba(255,255,255,0.7); }
+
+  .summary-var {
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  /* ── FOOTER ── */
+  .doc-footer {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 40px 40px;
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--subtle);
+    text-transform: uppercase;
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .doc-header-inner, .intro-inner, .main, .doc-footer { padding-left: 20px; padding-right: 20px; }
+    .service-url-chip { display: none; }
+    .summary-row { flex-direction: column; align-items: flex-start; gap: 2px; }
+  }
+</style>
+
+<!-- HEADER -->
+<div class="doc-header">
+  <div class="doc-header-inner">
+    <div class="doc-eyebrow">Praeto Compliance Club · Backend Setup</div>
+    <h1 class="doc-title">API Account Setup Guide<br>for Breyten</h1>
+    <div class="doc-sub">Three accounts to create — SendGrid, Anthropic, and PayFast.<br>Follow each section in order and note down every key before closing the tab.</div>
+  </div>
+</div>
+
+<!-- INTRO -->
+<div class="intro">
+  <div class="intro-inner">
+    <div class="intro-rail"></div>
+    <p>
+      <strong>Before you start:</strong> Keep a blank notepad or text file open. Each service gives you a key only once — if you close the tab without copying it, you have to regenerate it. At the end of this guide, paste all three keys into the <code>.env</code> file on the server. You don't need a credit card for Anthropic to start, and PayFast is free to register — you only pay per transaction.
+    </p>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- ── SENDGRID ── -->
+  <div class="service">
+    <div class="service-header">
+      <div class="service-stripe" style="background: var(--sendgrid);"></div>
+      <div class="service-meta">
+        <div class="service-label">Service 1 of 3 · Transactional Email</div>
+        <div class="service-name">SendGrid</div>
+        <div class="service-purpose">Sends welcome emails, payment receipts, password resets, and compliance alert broadcasts to members.</div>
+      </div>
+      <a class="service-url-chip" href="https://signup.sendgrid.com" target="_blank">signup.sendgrid.com</a>
+    </div>
+
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Create a free Twilio SendGrid account</div>
+          <div class="step-detail">
+            Go to <a href="https://signup.sendgrid.com" target="_blank">signup.sendgrid.com</a>. Fill in your name, email address, and a password. Use <strong>berkeley@praeto.co.za</strong> or Breyten's own email — either works. Click <strong>Create Account</strong>.<br><br>
+            You'll get a verification email. Open it and click the confirmation link. This takes you back to SendGrid's dashboard.
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">Complete the short setup survey</div>
+          <div class="step-detail">
+            SendGrid asks a few questions about how you'll use email. Answer like this:
+            <br><br>
+            • <strong>Sending purpose:</strong> Transactional<br>
+            • <strong>Volume:</strong> &lt; 10,000 emails per month<br>
+            • <strong>Coding from scratch:</strong> Yes<br><br>
+            Click through until you land on the main dashboard.
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Verify your sender email address</div>
+          <div class="step-detail">
+            In the left sidebar, go to <strong>Settings → Sender Authentication</strong>. Click <strong>Verify a Single Sender</strong>. Fill in:<br><br>
+            • <strong>From Name:</strong> <code>Praeto Compliance Club</code><br>
+            • <strong>From Email:</strong> <code>noreply@praeto.co.za</code><br>
+            • <strong>Reply To:</strong> <code>members@praeto.co.za</code><br><br>
+            Click <strong>Create</strong>. SendGrid sends a verification email to <code>noreply@praeto.co.za</code>. Open that email (from the cPanel email account) and click the verification link.
+          </div>
+          <div class="callout">
+            <div class="callout-mark">NOTE</div>
+            <p>If <code>noreply@praeto.co.za</code> doesn't exist yet, create it first in cPanel → <strong>Email Accounts</strong>, then come back and verify. The email address must exist to receive the verification link.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">Create your API key</div>
+          <div class="step-detail">
+            In the left sidebar, go to <strong>Settings → API Keys</strong>. Click <strong>Create API Key</strong> (top right).<br><br>
+            • <strong>Name:</strong> <code>praeto-compliance-club</code><br>
+            • <strong>Access:</strong> Full Access<br><br>
+            Click <strong>Create &amp; View</strong>. You'll see a long key starting with <code>SG.</code>
+          </div>
+          <div class="callout">
+            <div class="callout-mark">COPY NOW</div>
+            <p><strong>Copy the entire key immediately and paste it into your notepad.</strong> SendGrid shows it only once — if you navigate away, you cannot see it again and will need to delete and regenerate.</p>
+          </div>
+          <div class="env-block">
+            <span class="env-comment"># Paste this into your .env file</span><br>
+            <span class="env-key">SENDGRID_API_KEY</span><span class="env-eq">=</span><span class="env-val">SG.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── ANTHROPIC ── -->
+  <div class="service">
+    <div class="service-header">
+      <div class="service-stripe" style="background: var(--anthropic);"></div>
+      <div class="service-meta">
+        <div class="service-label">Service 2 of 3 · AI Compliance Advisor</div>
+        <div class="service-name">Anthropic (Claude API)</div>
+        <div class="service-purpose">Powers the AI Compliance Advisor — members ask compliance questions and get expert answers about FAIS, FIC Act, FSCA, and more.</div>
+      </div>
+      <a class="service-url-chip" href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>
+    </div>
+
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Create an Anthropic account</div>
+          <div class="step-detail">
+            Go to <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>. Click <strong>Sign Up</strong>. Enter your email address and create a password.<br><br>
+            You'll receive a verification email — click the link in it to confirm your account. Once confirmed, you'll be taken to the Anthropic Console dashboard.
+          </div>
+          <div class="callout">
+            <div class="callout-mark">NOTE</div>
+            <p>You'll need to add a credit card before the API will work. Anthropic charges per use — Berkeley's typical usage for the AI Advisor will cost roughly <strong>R10–R40 per month</strong> depending on how many members use it. There's no monthly subscription fee on Anthropic's side.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">Add a billing method</div>
+          <div class="step-detail">
+            In the top navigation, click <strong>Settings → Billing</strong>. Click <strong>Add payment method</strong> and enter a credit or debit card. You don't need to buy credits upfront — Anthropic bills at the end of each month for what you used.
+            <br><br>
+            If you want a spending cap, click <strong>Set a usage limit</strong> and set it to something like $20/month to start.
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Generate an API key</div>
+          <div class="step-detail">
+            In the left sidebar, go to <strong>API Keys</strong>. Click <strong>Create Key</strong>.<br><br>
+            • <strong>Name:</strong> <code>praeto-compliance-club</code><br><br>
+            Click <strong>Create Key</strong>. A key starting with <code>sk-ant-</code> appears.
+          </div>
+          <div class="callout">
+            <div class="callout-mark">COPY NOW</div>
+            <p><strong>Copy the entire key and paste it into your notepad.</strong> Like SendGrid, this is shown only once. If you miss it, click <strong>Delete</strong> and create a new one.</p>
+          </div>
+          <div class="env-block">
+            <span class="env-comment"># Paste this into your .env file</span><br>
+            <span class="env-key">ANTHROPIC_API_KEY</span><span class="env-eq">=</span><span class="env-val">sk-ant-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── PAYFAST ── -->
+  <div class="service">
+    <div class="service-header">
+      <div class="service-stripe" style="background: var(--payfast);"></div>
+      <div class="service-meta">
+        <div class="service-label">Service 3 of 3 · Payment Gateway</div>
+        <div class="service-name">PayFast</div>
+        <div class="service-purpose">Processes monthly membership subscriptions — Foundation (R2 500), Practitioner (R5 000), and Elite (R15 000). Money goes directly into Berkeley's bank account.</div>
+      </div>
+      <a class="service-url-chip" href="https://www.payfast.co.za/registration" target="_blank">payfast.co.za</a>
+    </div>
+
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Register a PayFast merchant account</div>
+          <div class="step-detail">
+            Go to <a href="https://www.payfast.co.za/registration" target="_blank">payfast.co.za/registration</a> and click <strong>Register as a Merchant</strong>.<br><br>
+            Fill in <strong>Berkeley's personal details</strong> (not Breyten's) — PayFast requires the account holder to be the business owner because this is where payments are deposited:<br><br>
+            • Full legal name: <strong>Berkeley Eldred Pretorius</strong><br>
+            • ID number: Berkeley's SA ID<br>
+            • Email: <strong>berkeley@praeto.co.za</strong><br>
+            • Cell number: Berkeley's mobile<br>
+            • Business name: <strong>Praeto Group Holdings / Praeto Trading CC</strong><br>
+            • Industry: <strong>Professional Services</strong>
+          </div>
+          <div class="callout">
+            <div class="callout-mark">IMPORTANT</div>
+            <p>PayFast will verify Berkeley's identity with FICA documents. He'll need to upload a certified copy of his <strong>SA ID</strong> and a <strong>bank statement</strong> or utility bill as proof of address (not older than 3 months). This is a legal FICA requirement — it's the same process as opening a bank account.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">Link Berkeley's bank account</div>
+          <div class="step-detail">
+            During registration, PayFast asks for a bank account to deposit payments into. Enter Berkeley's business bank account details:<br><br>
+            • Bank name<br>
+            • Account holder name<br>
+            • Account number<br>
+            • Branch code<br><br>
+            PayFast does a small test deposit (a few cents) to verify the account. Berkeley will need to confirm the amount once it arrives.
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Test in Sandbox mode first</div>
+          <div class="step-detail">
+            While PayFast is completing the verification (usually 1–3 business days), we can test payments using PayFast's <strong>Sandbox</strong>. The system is already set up for this — the <code>.env</code> file has <code>PAYFAST_ENV=sandbox</code> by default.<br><br>
+            PayFast provides test credentials for sandbox. Log into your PayFast account, go to <strong>Integrations → Sandbox</strong> and you'll see the test Merchant ID and Key. Use these for testing.
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">Get your live Merchant credentials</div>
+          <div class="step-detail">
+            Once PayFast approves the account, log into <a href="https://www.payfast.co.za" target="_blank">payfast.co.za</a> → <strong>Settings → Merchant Settings</strong>. You'll find three values:<br><br>
+            • <strong>Merchant ID</strong> — a 8-digit number<br>
+            • <strong>Merchant Key</strong> — a 16-character alphanumeric string<br>
+            • <strong>Passphrase</strong> — set this yourself (Settings → Merchant Settings → Set Passphrase). Choose something like <code>Praeto@PayFast2026</code> and note it down.
+          </div>
+          <div class="env-block">
+            <span class="env-comment"># Paste these into your .env file</span><br>
+            <span class="env-key">PAYFAST_MERCHANT_ID</span><span class="env-eq">=</span><span class="env-val">12345678</span><br>
+            <span class="env-key">PAYFAST_MERCHANT_KEY</span><span class="env-eq">=</span><span class="env-val">abc123def456ghi7</span><br>
+            <span class="env-key">PAYFAST_PASSPHRASE</span><span class="env-eq">=</span><span class="env-val">Praeto@PayFast2026</span><br>
+            <span class="env-comment"># Change from sandbox to production when account is approved:</span><br>
+            <span class="env-key">PAYFAST_ENV</span><span class="env-eq">=</span><span class="env-val">production</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── FINAL SUMMARY ── -->
+  <div class="summary">
+    <div class="summary-title">Once you have all three — here's where they go</div>
+
+    <div class="summary-row">
+      <div class="summary-service">Open the <code style="background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.15);color:var(--gold-l)">.env</code> file in the backend folder on the server</div>
+      <div class="summary-var">backend/.env</div>
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-service">SendGrid — paste your <code style="background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.15);color:var(--gold-l)">SG.xxx…</code> key</div>
+      <div class="summary-var">SENDGRID_API_KEY=</div>
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-service">Anthropic — paste your <code style="background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.15);color:var(--gold-l)">sk-ant-xxx…</code> key</div>
+      <div class="summary-var">ANTHROPIC_API_KEY=</div>
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-service">PayFast — Merchant ID, Key, and Passphrase</div>
+      <div class="summary-var">PAYFAST_MERCHANT_ID=<br>PAYFAST_MERCHANT_KEY=<br>PAYFAST_PASSPHRASE=</div>
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-service">Once all keys are in, restart the backend server and test a payment in Sandbox</div>
+      <div class="summary-var" style="color:#6EE7A0">Then go live ✓</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="doc-footer">
+  <span>Praeto Compliance Club · API Setup Guide</span>
+  <span>For Berkeley Pretorius · FSP 1457</span>
+  <span>Prepared June 2026</span>
+</div>

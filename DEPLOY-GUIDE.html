@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Praeto Compliance Club — cPanel Deployment Guide</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#F9F8F5;color:#111827;line-height:1.6;font-size:15px}
+.header{background:#1F3864;color:white;padding:40px 48px;border-bottom:4px solid #C9A84C}
+.header h1{font-family:Georgia,serif;font-size:32px;font-weight:700;margin-bottom:6px}
+.header p{color:rgba(255,255,255,0.65);font-size:14px}
+.body{max-width:900px;margin:40px auto;padding:0 24px 60px}
+h2{font-family:Georgia,serif;font-size:22px;color:#1F3864;margin:36px 0 14px;padding-bottom:8px;border-bottom:2px solid #C9A84C}
+h3{font-size:16px;font-weight:700;color:#1F3864;margin:20px 0 8px}
+p{color:#374151;margin-bottom:12px}
+.step{background:white;border:1px solid #E5E0D5;border-radius:4px;padding:20px 24px;margin-bottom:14px;
+  border-left:4px solid #1F3864}
+.step-num{font-family:'Courier New',monospace;font-size:11px;color:#C9A84C;font-weight:700;
+  letter-spacing:0.15em;text-transform:uppercase;margin-bottom:6px}
+.step-title{font-size:16px;font-weight:700;color:#111827;margin-bottom:8px}
+.step p{margin-bottom:6px;font-size:14px}
+code{background:#1F3864;color:#C9A84C;padding:2px 8px;border-radius:2px;
+  font-family:'Courier New',monospace;font-size:13px}
+pre{background:#1F3864;color:#E8C96A;padding:16px 20px;border-radius:4px;
+  font-family:'Courier New',monospace;font-size:13px;overflow-x:auto;margin:10px 0;line-height:1.7}
+.file-tree{background:#111827;color:#E8C96A;padding:20px;border-radius:4px;font-family:'Courier New',monospace;
+  font-size:13px;line-height:1.8;margin:12px 0}
+.file-tree .dir{color:#60A5FA}
+.file-tree .important{color:#34D399}
+.url-table{width:100%;border-collapse:collapse;margin:12px 0}
+.url-table th{background:#1F3864;color:#C9A84C;padding:10px 14px;text-align:left;
+  font-size:11px;font-family:'Courier New',monospace;letter-spacing:0.1em;text-transform:uppercase}
+.url-table td{padding:10px 14px;border-bottom:1px solid #E5E0D5;font-size:13px}
+.url-table tr:nth-child(even) td{background:#F9F8F5}
+.alert{padding:14px 18px;border-radius:4px;margin:14px 0;font-size:13px;line-height:1.6}
+.alert-warn{background:#FEF3C7;border:1px solid #D97706;color:#92400E}
+.alert-info{background:#DBEAFE;border:1px solid #3B82F6;color:#1E40AF}
+.alert-success{background:#DCFCE7;border:1px solid #16A34A;color:#166534}
+.tick{color:#16A34A;font-weight:700}
+.badge{display:inline-block;padding:2px 8px;border-radius:2px;font-size:11px;font-weight:700;
+  font-family:'Courier New',monospace;letter-spacing:0.06em}
+.badge-gold{background:#F7EDD0;color:#92400E}
+.badge-navy{background:#EFF4FF;color:#1F3864}
+.badge-green{background:#DCFCE7;color:#166534}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>Praeto Compliance Club — cPanel Deployment Guide</h1>
+  <p>Complete step-by-step instructions for deploying the full platform to your cPanel hosting account · Prepared for Berkeley Pretorius · FSP 1457</p>
+</div>
+
+<div class="body">
+
+<h2>What You Are Deploying</h2>
+<p>Three components that make up the complete Praeto Compliance Club platform:</p>
+<table class="url-table">
+  <thead><tr><th>Component</th><th>File(s)</th><th>Final URL</th><th>Who Accesses It</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Marketing Landing Page</strong></td><td><code>landing/index.html</code></td><td><code>www.praeto.co.za</code></td><td>Prospective members</td></tr>
+    <tr><td><strong>Member Portal + Admin Panel</strong></td><td><code>app/</code> folder</td><td><code>www.praeto.co.za/app</code></td><td>Members (<code>#/portal</code>) &amp; You (<code>#/admin</code>)</td></tr>
+  </tbody>
+</table>
+
+<h2>File Structure — What Goes Where</h2>
+<div class="file-tree">
+<span class="dir">public_html/</span>               ← your cPanel web root<br>
+├── <span class="important">.htaccess</span>              ← upload this first (root redirect rules)<br>
+├── <span class="important">index.html</span>             ← landing page (copy from landing/index.html)<br>
+└── <span class="dir">app/</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="important">.htaccess</span>          ← React SPA routing rules<br>
+&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="important">index.html</span>         ← React entry point<br>
+&nbsp;&nbsp;&nbsp;&nbsp;├── favicon.svg<br>
+&nbsp;&nbsp;&nbsp;&nbsp;└── <span class="dir">assets/</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── index-[hash].js    ← compiled React bundle (~297KB)
+</div>
+
+<h2>Prerequisites</h2>
+<div class="step">
+  <div class="step-num">Before You Start</div>
+  <div class="step-title">What you need</div>
+  <p><span class="tick">✓</span> A cPanel hosting account (any provider — Hetzner, Afrihost, Web4Africa, etc.)</p>
+  <p><span class="tick">✓</span> A domain pointed to your hosting (e.g. <code>www.praeto.co.za</code>)</p>
+  <p><span class="tick">✓</span> SSL certificate active on your domain (cPanel → Let's Encrypt / AutoSSL)</p>
+  <p><span class="tick">✓</span> The ZIP file from this package, extracted on your computer</p>
+</div>
+
+<h2>Step-by-Step Deployment</h2>
+
+<div class="step">
+  <div class="step-num">Step 1</div>
+  <div class="step-title">Log into cPanel and open File Manager</div>
+  <p>Go to your hosting provider's cPanel URL (usually <code>yourdomain.co.za:2083</code> or via your host's client area).</p>
+  <p>Click <strong>File Manager</strong> → navigate to <code>public_html</code>. This is your web root — everything here is publicly accessible.</p>
+  <div class="alert alert-warn">⚠ If <code>public_html</code> already has files (e.g. a WordPress site), do not delete them — scroll to Step 1b for subdomain deployment instead.</div>
+</div>
+
+<div class="step">
+  <div class="step-num">Step 2</div>
+  <div class="step-title">Upload the landing page to public_html root</div>
+  <p>In File Manager, make sure you are inside <code>public_html/</code>.</p>
+  <p>Click <strong>Upload</strong> → upload the file: <code>landing/index.html</code></p>
+  <p>This file should be named <code>index.html</code> at the root — it becomes your homepage at <code>www.praeto.co.za</code>.</p>
+  <p>Also upload the root <code>.htaccess</code> file. <strong>Important:</strong> in File Manager, hidden files (starting with .) may not show by default. Click <strong>Settings</strong> → tick <strong>Show Hidden Files</strong>.</p>
+</div>
+
+<div class="step">
+  <div class="step-num">Step 3</div>
+  <div class="step-title">Create the /app folder and upload the React bundle</div>
+  <p>Still inside <code>public_html/</code>: click <strong>New Folder</strong> → name it <code>app</code>.</p>
+  <p>Navigate into <code>public_html/app/</code>.</p>
+  <p>Upload all files from your extracted <code>app/</code> folder:</p>
+  <pre>app/index.html
+app/.htaccess
+app/favicon.svg
+app/icons.svg
+app/assets/index-[hash].js</pre>
+  <p>The easiest way: select all files in the <code>app/</code> folder on your computer, then drag-and-drop into File Manager, or use <strong>Upload</strong> to select multiple files. Upload the <code>assets/</code> subfolder separately by creating it first.</p>
+</div>
+
+<div class="step">
+  <div class="step-num">Step 4</div>
+  <div class="step-title">Create the assets subfolder and upload the JS bundle</div>
+  <p>Inside <code>public_html/app/</code>: click <strong>New Folder</strong> → name it <code>assets</code>.</p>
+  <p>Navigate into <code>public_html/app/assets/</code>.</p>
+  <p>Upload the file: <code>app/assets/index-C9lBq05w.js</code> (the filename hash may differ slightly).</p>
+  <div class="alert alert-info">ℹ The JS bundle is ~300KB — it contains the entire member portal and admin panel compiled into one file. Upload may take 15-30 seconds on slower connections.</div>
+</div>
+
+<div class="step">
+  <div class="step-num">Step 5</div>
+  <div class="step-title">Verify file permissions</div>
+  <p>All uploaded files should have permissions <code>644</code> (files) and <code>755</code> (folders).</p>
+  <p>In File Manager, right-click any file → <strong>Change Permissions</strong> → set to <code>644</code>.</p>
+  <p>cPanel usually sets these correctly on upload, but double-check if you get 403 errors.</p>
+</div>
+
+<div class="step">
+  <div class="step-num">Step 6</div>
+  <div class="step-title">Enable mod_rewrite (if not already active)</div>
+  <p>The <code>.htaccess</code> files require Apache's <code>mod_rewrite</code> module. This is enabled by default on virtually all cPanel hosts.</p>
+  <p>If you get errors after deployment, contact your host and ask them to confirm <code>mod_rewrite</code> and <code>AllowOverride All</code> are enabled for your account.</p>
+</div>
+
+<div class="step">
+  <div class="step-num">Step 7</div>
+  <div class="step-title">Test your deployment</div>
+  <p>Open a browser and test these three URLs:</p>
+  <table class="url-table">
+    <thead><tr><th>URL</th><th>What You Should See</th></tr></thead>
+    <tbody>
+      <tr><td><code>https://www.praeto.co.za</code></td><td>Marketing landing page with sanction counter and ticker</td></tr>
+      <tr><td><code>https://www.praeto.co.za/app/#/portal</code></td><td>Member portal dashboard (logged in as Berkeley / Elite)</td></tr>
+      <tr><td><code>https://www.praeto.co.za/app/#/admin</code></td><td>Admin command centre — members, revenue, alerts, AI</td></tr>
+    </tbody>
+  </table>
+  <div class="alert alert-success">✓ If all three load correctly, your platform is live. The full deployment takes under 10 minutes.</div>
+</div>
+
+<h2>Troubleshooting</h2>
+
+<h3>Landing page shows but /app gives a 404</h3>
+<p>The <code>app/.htaccess</code> file is missing or not uploaded. Go to <code>public_html/app/</code> in File Manager, enable hidden files, and confirm <code>.htaccess</code> is present.</p>
+
+<h3>Blank white screen at /app</h3>
+<p>The JS bundle in <code>assets/</code> is missing. Check that <code>index-[hash].js</code> exists inside <code>public_html/app/assets/</code>. Also check the browser console (F12 → Console) for the exact error.</p>
+
+<h3>HTTPS redirect not working</h3>
+<p>Go to cPanel → <strong>SSL/TLS</strong> → confirm a certificate is installed. Then go to <strong>AutoSSL</strong> and run it if needed. The <code>.htaccess</code> HTTPS redirect only works once SSL is active.</p>
+
+<h3>AI Advisor / AI Broadcast not responding</h3>
+<p>The AI features call the Anthropic API directly from the browser. Confirm you have active API access at <code>console.anthropic.com</code>. The API key is handled server-side by Anthropic's infrastructure — no key configuration is needed on your hosting.</p>
+
+<h2>Going Live — Final Checklist</h2>
+<div class="alert alert-info">
+  <p>Before sharing the URL publicly, confirm these 8 items:</p>
+  <p><span class="tick">✓</span> SSL certificate active (green padlock in browser)</p>
+  <p><span class="tick">✓</span> Landing page loads at root domain</p>
+  <p><span class="tick">✓</span> Member portal loads at <code>/app/#/portal</code></p>
+  <p><span class="tick">✓</span> Admin panel loads at <code>/app/#/admin</code> (keep this URL private)</p>
+  <p><span class="tick">✓</span> AI Compliance Advisor responds to a test message</p>
+  <p><span class="tick">✓</span> Registration modal on landing page works (submit test application)</p>
+  <p><span class="tick">✓</span> Alert ticker scrolling on landing page</p>
+  <p><span class="tick">✓</span> Mobile view tested (open on your phone)</p>
+</div>
+
+<h2>Recommended cPanel Email Setup</h2>
+<p>Create these email addresses in cPanel → <strong>Email Accounts</strong>:</p>
+<table class="url-table">
+  <thead><tr><th>Address</th><th>Purpose</th></tr></thead>
+  <tbody>
+    <tr><td><code>members@praeto.co.za</code></td><td>Member communications and alerts</td></tr>
+    <tr><td><code>admin@praeto.co.za</code></td><td>Platform admin notifications</td></tr>
+    <tr><td><code>noreply@praeto.co.za</code></td><td>Automated welcome emails</td></tr>
+    <tr><td><code>berkeley@praeto.co.za</code></td><td>Direct KI contact for Elite members</td></tr>
+  </tbody>
+</table>
+
+<h2>Next Steps After Going Live</h2>
+<p><strong>Day 1:</strong> Share the landing page URL with your WhatsApp network of FSPs. The FSCA sanction counter will do the talking.</p>
+<p><strong>Week 1:</strong> Submit the site to Google Search Console and add your business to Google My Business under "Financial Services Training".</p>
+<p><strong>Month 1:</strong> Once you have 10+ paid members, upgrade to a payment gateway (PayFast or Peach Payments) and connect it to the membership portal for automated billing.</p>
+
+<hr style="margin:40px 0;border:none;border-top:1px solid #E5E0D5">
+<p style="font-size:12px;color:#9CA3AF;text-align:center">
+  Praeto Compliance Club · Praeto Group Holdings · Durban, KwaZulu-Natal · FSP 1457<br>
+  Deployment guide prepared June 2026
+</p>
+</div>
+</body>
+</html>
